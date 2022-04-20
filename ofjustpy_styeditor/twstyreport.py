@@ -7,7 +7,7 @@ from dpath.util import get as dget, set as dset,  new as dnew, delete as ddelete
 def annotate_styreport(de):
     rr = styClause.to_json(*de.twsty_tags)
     #rr.hctype = de.stub.hctype
-    #rr.spath = de.stub.spath
+    rr.spath = de.stub.spath
     x = Dict()
     x._sty = rr
     return x
