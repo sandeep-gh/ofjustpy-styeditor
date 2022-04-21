@@ -59,25 +59,28 @@ def make_wp_react(wp):
                     print(stub, " ", dbref)
                     styUpdated = tstr(*styClause.to_clause(styj))
                     # #logger.debug(f"styUp {styUpdated}")
-                    print(spath, " ", dbref.key, " ",
-                          dbref.classes, " ", styUpdated)
-                    # if 'webpage' in kpath:
-                    #     logger.debug(
-                    #         f"SKIPPING : {kpath} for now : FIX ME {styUpdated}")
-                    # else:
-                    #     logging.debug(
-                    #         f"updatding {spath}-/-{kpath}/{dbref.key} from {dbref.classes} to {styUpdated}")
-                    #     dbref.classes = styUpdated
+                    print(spath, " ", dbref.stub.key)
+                    print("classes = ", dbref.classes)
+                    print("styUpdated = ", styUpdated)
+                    if isinstance(dbref, jp.WebPage):
+                        dbref.body_classes = styUpdated
+                        logger.debug(
+                            f"SKIPPING : {kpath} for now : FIX ME {styUpdated}")
+                    else:
+                        logging.debug(
+                            f"updatding {spath}-/-{kpath}/{dbref.stub.key} from {dbref.classes} to {styUpdated}")
+                        #dbref.classes = styUpdated
+                        dbref.set_class("bg-green-400")
+                        print(dbref.classes)
 
                     # ====================== end =====================
                     pass
                 # collections.deque(
                 #     map(update_sty, matched_kpaths(arg.pathexpr, styreport)), maxlen=0)
                 for _ in matched_kpaths(arg.pathexpr, styreport):
-                    print(_)
                     update_sty(_)
-
-                # jp.run_task(target_wp.update())
+                # refresh the webpage
+                jp.run_task(target_wp.update())
                 pass
             case ReactTag_UI.append_sty:
                 # logger.debug("appending ")
@@ -110,7 +113,7 @@ def make_wp_react(wp):
     wp.react_ui = react_ui
 
 
-@ jp.SetRoute("/twstyconfig")
+@jp.SetRoute("/twstyconfig")
 def wp_twstyeditor(request):
     print("invoked")
     session_id = "asession"
