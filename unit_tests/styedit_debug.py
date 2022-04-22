@@ -69,3 +69,28 @@ jp.justpy(launcher, debug=True, start_server=False)
 #     fh.write(res)
 # print(styreport)
 # ================================ end ===============================
+# ===================== test the styedit workflow ====================
+# request = Dict()
+# request.session_id = "ah"
+# wp = launcher(request)
+# msg = Dict()
+# msg.page = wp
+# ojs.session_manager.stubStore.twstyediturl.target.on_click(msg)
+# wp_ed = ojs.wp_twstyeditor.wp_twstyeditor(request)
+# # print(wp_ed)
+# # print(ojs.wp_twstyeditor.target_wp)
+# # wp_ed.edbtn.on_click(msg)
+# ed_stubStore = wp_ed.session_manager.stubStore
+# ed_stubStore.bulkedit.componentSelectorPathExpr.target.value = "$."
+# ed_stubStore.bulkedit.stySelectorPathExpr.target.value = "bg"
+# ed_stubStore.bulkedit.styTargetValue.target.value = "20"
+# msg.page = wp_ed
+# ed_stubStore.bulkedit.updateStyBtn.target.on_click(msg)
+
+# styreport = ojs.get_styReport(wp)
+# opts = jsbeautifier.default_options()
+# res = jsbeautifier.beautify(json.dumps(styreport), opts)
+# with open("styreport.json", "w") as fh:
+#     fh.write(res)
+# print(styreport)
+# ================================ end ===============================

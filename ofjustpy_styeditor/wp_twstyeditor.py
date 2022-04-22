@@ -69,8 +69,8 @@ def make_wp_react(wp):
                     else:
                         logging.debug(
                             f"updatding {spath}-/-{kpath}/{dbref.stub.key} from {dbref.classes} to {styUpdated}")
-                        #dbref.classes = styUpdated
-                        dbref.set_class("bg-green-400")
+                        dbref.classes = styUpdated
+                        # dbref.set_class("bg-green-400")
                         print(dbref.classes)
 
                     # ====================== end =====================
