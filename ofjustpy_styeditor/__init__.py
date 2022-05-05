@@ -18,16 +18,18 @@ def enableStyEdit(func):
         from . import wp_twstyeditor
         global target_wp
         global session_manager
-        print("I am not here")
         wp = func(*args, **kwargs)
         wp_twstyeditor.target_wp = wp
-        # put A under its won session manager
+        # put href url to twstyconfig on target_wp under its own session manager
         session_manager = oj.get_session_manager("enableStyEdit")
         with oj.sessionctx(session_manager):
             oj.A_("twstyediturl", href="twstyconfig",
                   text="twstyconfig", target="_blank")(wp)
 
-        print("TODO: enable wp for editing")
+
+        #scracthpad for hierarchy navigator
+
+        
         # print(styreport)
         # styedit this page
         return wp
