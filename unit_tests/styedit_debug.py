@@ -1,3 +1,18 @@
+import logging
+import os
+if os:
+    try:
+        os.remove("launcher.log")
+    except:
+        pass
+
+import sys
+if sys:
+    FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
+    logging.basicConfig(filename="launcher.log",
+                        level=logging.DEBUG, format=FORMAT)
+
+    
 import ofjustpy as oj
 from tailwind_tags import *
 import justpy as jp
@@ -37,25 +52,33 @@ def launcher(request):
     return wp
 
 
-# wp = jp.WebPage()
+#wp = jp.WebPage()
 # circle = circleStub(wp)
 # print(circle.twsty_tags)
 #wp = launcher(None)
-app = jp.app
-jp.justpy(launcher, debug=True, start_server=False)
+#app = jp.app
+#jp.justpy(launcher, debug=True, start_server=False)
 
 # ===================== test the styedit workflow ====================
-# request = Dict()
-# request.session_id = "ah"
-# wp = launcher(request)
-# msg = Dict()
-# msg.page = wp
-# ojs.session_manager.stubStore.twstyediturl.target.on_click(msg)
-# wp_ed = ojs.wp_twstyeditor.wp_twstyeditor(request)
+request = Dict()
+request.session_id = "ah"
+wp = launcher(request)
+msg = Dict()
+msg.page = wp
+ojs.session_manager.stubStore.twstyediturl.target.on_click(msg)
+wp_ed = ojs.wp_twstyeditor.wp_twstyeditor(request)
 
 # # print(ojs.wp_twstyeditor.target_wp)
 
-# ed_stubStore = wp_ed.session_manager.stubStore
+
+ed_stubStore = wp_ed.session_manager.stubStore
+msg = Dict()
+msg.value = None
+msg.page = wp_ed
+fontsz_dbref = ed_stubStore.twreference.FontSize.target
+fontsz_dbref.value = "xs"
+print(ed_stubStore.twreference.FontSize.target.on_change(msg)
+      )
 # ed_stubStore.bulkedit.componentSelectorPathExpr.target.value = "$."
 # ed_stubStore.bulkedit.stySelectorPathExpr.target.value = "FontWeight"
 # ed_stubStore.bulkedit.styTargetValue.target.value = "bold"

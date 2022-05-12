@@ -12,15 +12,20 @@ from .twstyreport import get_styReport
 from .components_twstyeditor import build_components
 from .styjson_utils import matched_kpaths
 import ofjustpy_react as ojr
-from .dpathutils import dget, dset
+from .dpathutils import dget, dset, dnew
 from tailwind_tags import tstr, styClause
 
+from .change_ctx_trmapping import ui_app_trmap, app_ui_trmap
 target_wp = None
 
 # register with looprunner; update_sty should go here
 extend_enum(ojr.ReactTag_UI, 'update_sty', 'update_sty')
 
-
+def walker(de, kpath="/"):
+    yield f"{kpath}{de.stub.key}", de
+    for ce in de.components:
+        yield from walker(ce, f"{kpath}{de.stub.key}/")
+        
 def make_wp_react(wp):
     def react_ui(tag, arg: dict[str, str]):
         logger.debug(f"react_ui: {tag}, {arg}")
@@ -112,6 +117,7 @@ def make_wp_react(wp):
                 pass
     wp.react_ui = react_ui
 
+    
 
 @jp.SetRoute("/twstyconfig")
 def wp_twstyeditor(request):
@@ -120,12 +126,36 @@ def wp_twstyeditor(request):
     session_manager = oj.get_session_manager(session_id)
     stubStore = session_manager.stubStore
     styreport = get_styReport(target_wp)
+    appstate = session_manager.appstate
+    #init appstate
+    appstate.selected_dbref = target_wp
+    appstate.append_twSty = None
     print(f"sty edit {target_wp.stub.key}")
-    with oj.sessionctx(session_manager):
-        build_components(session_manager)
+    # ================ build wp component hierarch ===============
+    component_hierarchy = Dict()
+    for cpath, ce in walker(target_wp):
+        dnew(component_hierarchy, cpath + "/_cref", ce)
+    print(component_hierarchy)
+    # ================j========= done =========================        
+    def callback_hinav_terminal_selector(terminal_path, component_hierarchy = component_hierarchy):
+        print("callback incovked ", terminal_path)
+        selected_dbref = dget(component_hierarchy, terminal_path)
+        print("terminal selected = ", selected_dbref)
+        selected_dbref.set_class("border-double")
+        selected_dbref.set_class("border-4")
+        selected_dbref.set_class("border-indigo-600")
+        appstate.selected_dbref = selected_dbref
+        jp.run_task(target_wp.update())
+        pass
+    with oj.sessionctx(session_manager) as tlctx:
+        build_components(session_manager, component_hierarchy, callback_hinav_terminal_selector)
+        oj.StackH_("hinav_view_panel", cgens=[oj.Textarea_("dummy_area", text="a really really long long text"), stubStore.componentedit.hinav.childpanel_])
+        
+        
         oj.Container_(
-            "tlc", cgens=[stubStore.bulkedit.Panel, stubStore.componentedit.Panel])
-        wp = oj.WebPage_("sty_wp", cgens=[stubStore.tlc])()
+            "tlc", cgens=[stubStore.bulkedit.Panel, tlctx.hinav_view_panel, stubStore.componentedit.hinav, stubStore.twreference.styValuesPanel])
+            
+        wp = oj.WebPage_("sty_wp", cgens=[stubStore.tlc], WPtype=ojr.WebPage, ui_app_trmap_iter=ui_app_trmap, app_ui_trmap_iter=app_ui_trmap, app_actions_trmap_iter=[], session_manager=session_manager )()
     wp.session_manager = session_manager
     make_wp_react(wp)
     # print(stubStore)

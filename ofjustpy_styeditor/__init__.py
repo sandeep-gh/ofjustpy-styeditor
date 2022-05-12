@@ -3,12 +3,12 @@ from .twstyreport import get_styReport
 #from .wp_twstyeditor import target_wp
 from . import wp_twstyeditor
 import functools
-
+import justpy as jp
 # yes This is global; for edit for only one wp is possible
 
 session_manager = None
 
-
+@jp.SetRoute("/index.html")
 def enableStyEdit(func):
     """
     register the stub in _hcs/stubStore
